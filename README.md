@@ -2,7 +2,7 @@
 Credit: This application is developed using the boilerplate application running on Node.js from https://github.com/mattmitchell6/sa-takehome-project-node
 
 ## How to build, configure and run your application.
-Download and upzip the sa-takehome-project-delie.zip file. 
+Download and upzip the delie_submission.zip file. 
 
 To build the application, go to the root folder (sa-takehome-project-delie) in your terminal and run ```npm install``` to install the dependencies.
 
