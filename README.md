@@ -4,7 +4,7 @@ Credit: This application is developed using the boilerplate application running 
 ## How to build, configure and run your application.
 Download and upzip the sa-takehome-project-delie.zip file. 
 
-To build the application, go to the root folder in your terminal and run ```npm install``` to install the dependencies.
+To build the application, go to the root folder (sa-takehome-project-delie) in your terminal and run ```npm install``` to install the dependencies.
 
 To run the application locally, run ```npm start``` in the terminal.
 
