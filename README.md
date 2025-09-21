@@ -1,8 +1,8 @@
 # Delie An's SA technical assessment submission
+Credit: This application is developed using the boilerplate application running on Node.js from https://github.com/mattmitchell6/sa-takehome-project-node
 
 ## How to build, configure and run your application.
-
-This application is developed using the boilerplate application running on Node.js from https://github.com/mattmitchell6/sa-takehome-project-node
+Download and upzip the sa-takehome-project-delie.zip file. 
 
 To build the application, go to the root folder and run ```npm install```.
 
@@ -12,23 +12,15 @@ Open [http://localhost:3000](http://localhost:3000) in the browser to view the a
 
 ## How does the solution work? Which Stripe APIs does it use? How is your application architected?
 
-### How is your application architected?
 
-This architecture uses a client-server model where the express.js backend orchestrates the payment process, while the frontend uses Stripe Payment Element UI to securely handle customer payment details. The transaction is managed by a Payment Intent API.
-
-**Client (Frontend):** A web application built with Handlebars and HTML/CSS/JavaScript that the customer interacts with. It displays the Stripe Payment Element UI and collects the customer's payment information.
-
-**Server (Backend):** An Express.js application running on Node.js. It handles routing and uses the Stripe JavaScript SDK to create PaymentIntents via the Stripe API.
-
-**Stripe:** Stripe provides the secure Payment Element UI, the Payment Intent API, and the infrastructure to handle the payment processing.
 
 ### How does the solution work?
 
-![Sequence Diagram](./images/sequence_diagram.png)
+![Sequence Diagram](./doc_images/sequence_diagram.png)
 
-(1) Customer goes to checkout page by clicking purchase on a book
+(1) Customer goes to the checkout page by clicking "purchase" on a book
 
-![Select a book](./images/select_a_book.png)
+![Select a book](./doc_images/select_a_book.png)
 
 (2) The client sends a `POST` request to server at the `/create-payment-intent` endpoint, passing the payment `amount`.
 
@@ -76,7 +68,7 @@ paymentElement.mount("#payment-element");
 
 The customer fills in the payment details. 
 
-![Compelete Payment Form](./images/payment_form.png)
+![Compelete Payment Form](./doc_images/payment_form.png)
 
 (7) When the payment form is submitted, `stripe.confirmPayment()` on the client collects the payment information the customer entered into the `element` and securely send it to Stripe for processing.
 
@@ -118,13 +110,24 @@ switch (paymentIntent.status) {
 }
 ```
 
-![Successful Payment](./images/successful_payment.png)
+![Successful Payment](./doc_images/successful_payment.png)
 
 ### Which Stripe APIs does it use?
 
 - Stripe Payment Intents API: [https://docs.stripe.com/api/payment_intents](https://docs.stripe.com/api/payment_intents)  
 
 - Payment Element UI: [https://docs.stripe.com/payments/payment-element](https://docs.stripe.com/payments/payment-element)
+
+### How is your application architected?
+
+This architecture uses a client-server model where the express.js backend orchestrates the payment process, while the frontend uses Stripe Payment Element UI to securely handle customer payment details. The transaction is managed by the Payment Intent API.
+
+**Client (Frontend):** A web application built with Handlebars and HTML/CSS/JavaScript that the customer interacts with. It displays the Stripe Payment Element UI and collects the customer's payment information.
+
+**Server (Backend):** An Express.js application running on Node.js. It handles routing and uses the Stripe JavaScript SDK to create PaymentIntents via the Stripe API.
+
+**Stripe:** Stripe provides the secure Payment Element UI, the Payment Intent API, and the infrastructure to handle the payment processing.
+
 
 ## How did you approach this problem? Which docs did you use to complete the project? What challenges did you encounter?
 
@@ -234,4 +237,3 @@ Comprehensive error handling can be implemented to notify the customer more deta
 Webhook can be implemented to automate actions after certain event happens. For example, when Stripe successfully processes a payment, it sends this event to the webhook endpoint and automatic fulfilment of the book purchase is triggered.
 
 Other Stripe capabilities can be implmented and extended: Stripe Radar for fraud prevention and Stripe Tax for tax automation.
-
