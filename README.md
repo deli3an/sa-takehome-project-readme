@@ -4,25 +4,42 @@ Credit: This application is developed using the boilerplate application running 
 ## How to build, configure and run your application.
 Download and upzip the sa-takehome-project-delie.zip file. 
 
-To build the application, go to the root folder and run ```npm install```.
+To build the application, go to the root folder in your terminal and run ```npm install``` to install the dependencies.
 
-To run the application locally, run ```npm start``` in the console.
+To run the application locally, run ```npm start``` in the terminal.
 
-Open [http://localhost:3000](http://localhost:3000) in the browser to view the application.
+Once started, open [http://localhost:3000](http://localhost:3000) in the browser to view the application.
 
 ## How does the solution work? Which Stripe APIs does it use? How is your application architected?
 
+### How is your application architected?
+
+This application uses a client-server architecture. The express.js backend orchestrates the payment process, while the frontend uses Stripe Payment Element UI to securely handle customer payment details. The transaction is managed by the Payment Intent API.
+
+**Client (Frontend):** A web application built with Handlebars, HTML, CSS, and JavaScript that the customer interacts with. It displays the Stripe Payment Element UI and collects the customer's payment information securely.
+
+**Server (Backend):** An Express.js application running on Node.js. It handles routing and uses the Stripe Node.js SDK to create PaymentIntents via the Stripe API.
+
+**Stripe:** Stripe provides the secure Payment Element UI, the Payment Intent API, and the infrastructure to handle the payment processing.
 
 
 ### How does the solution work?
 
-![Sequence Diagram](./doc_images/sequence_diagram.png)
+<div align="center">
+    <img src="./doc_images/sequence_diagram.png" alt="Sequence Diagram">
+</div>
 
-(1) Customer goes to the checkout page by clicking "purchase" on a book
+(1) The customer clicks "Purchase" on a book to proceed to the checkout page.
 
-![Select a book](./doc_images/select_a_book.png)
+<div align="center">
+    <img src="./doc_images/select_a_book.png" alt="Select a book">
+</div>
+<div align="center">
+    <img src="./doc_images/checkout.png" alt="Checkout" width="400">
+</div>
 
-(2) The client sends a `POST` request to server at the `/create-payment-intent` endpoint, passing the payment `amount`.
+
+(2) The client sends a `POST` request to the server at the `/create-payment-intent` endpoint, passing the payment `amount`.
 
 ```javascript
 async function initialize() {
@@ -34,26 +51,25 @@ async function initialize() {
 }
 ```
 
-(3) Server receives the request and the `amount` and creates a Payment Intent using Stripe Payment Intent API. 
+(3) The server receives the request and the `amount` and creates a Payment Intent using Stripe Payment Intent API. 
 
 ```javascript
 const paymentIntent = await stripe.paymentIntents.create({
-amount: amount,
-currency: "sgd",
-// In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
-automatic_payment_methods: {
-  enabled: true,
-},
+    amount: amount,
+    currency: "sgd",
+    automatic_payment_methods: {
+    enabled: true,
+    },
 });
 ```
 
-(4) Stripe returns the PaymentIntent with the `client secret`. 
+(4) Stripe returns the Payment Intent with the `client secret`. 
 
 (5) The server sends the `client secret` to the client.
 
 ```javascript
 res.send({
-clientSecret: paymentIntent.client_secret,
+    clientSecret: paymentIntent.client_secret,
 });
 ```
 
@@ -68,9 +84,12 @@ paymentElement.mount("#payment-element");
 
 The customer fills in the payment details. 
 
-![Compelete Payment Form](./doc_images/payment_form.png)
+<div align="center">
+    <img src="./doc_images/payment_form.png" alt="Compelete Payment Form" width="400">
+</div>
 
-(7) When the payment form is submitted, `stripe.confirmPayment()` on the client collects the payment information the customer entered into the `element` and securely send it to Stripe for processing.
+
+(7) When the payment form is submitted, `stripe.confirmPayment()` on the client collects the payment information the customer entered into the `element` and securely sends it to Stripe for processing.
 
 ```javascript
 async function handleSubmit(e) {
@@ -85,7 +104,7 @@ async function handleSubmit(e) {
 }
 ```
 
-(8) The customer is redirected to `\success` route after the after the PaymentIntent is confirmed.
+(8) The customer is redirected to `\success` route after the PaymentIntent is confirmed.
 
 ```javascript
 confirmParams: {
@@ -93,7 +112,7 @@ confirmParams: {
 },
 ```
 
-(9) The `success.hbs` displays the payment status message. Total amount of the charge and Stripe Payment Intent ID are discplayed.
+(9) The `success.hbs` with `success.js` displays the payment status message that includes the total amount of the charge and Stripe Payment Intent ID.
 
 ```javascript
 switch (paymentIntent.status) {
@@ -110,7 +129,9 @@ switch (paymentIntent.status) {
 }
 ```
 
-![Successful Payment](./doc_images/successful_payment.png)
+<div align="center">
+    <img src="./doc_images/successful_payment.png" alt="Successful Payment">
+</div>
 
 ### Which Stripe APIs does it use?
 
@@ -118,15 +139,6 @@ switch (paymentIntent.status) {
 
 - Payment Element UI: [https://docs.stripe.com/payments/payment-element](https://docs.stripe.com/payments/payment-element)
 
-### How is your application architected?
-
-This architecture uses a client-server model where the express.js backend orchestrates the payment process, while the frontend uses Stripe Payment Element UI to securely handle customer payment details. The transaction is managed by the Payment Intent API.
-
-**Client (Frontend):** A web application built with Handlebars and HTML/CSS/JavaScript that the customer interacts with. It displays the Stripe Payment Element UI and collects the customer's payment information.
-
-**Server (Backend):** An Express.js application running on Node.js. It handles routing and uses the Stripe JavaScript SDK to create PaymentIntents via the Stripe API.
-
-**Stripe:** Stripe provides the secure Payment Element UI, the Payment Intent API, and the infrastructure to handle the payment processing.
 
 
 ## How did you approach this problem? Which docs did you use to complete the project? What challenges did you encounter?
@@ -135,45 +147,45 @@ This architecture uses a client-server model where the express.js backend orches
 
 **Step 1: Understand the problem from the technical assessment instructions**
 
-The output includes:
+The goal was to build an application that allows a user to
 
 - Select a book to purchase.
 
 - Checkout and purchase the item using Stripe Elements.
 
-- Display a confirmation of purchase to the user with the total amount of the charge and Stripe Payment Intent ID (beginning with pi_).
+- See a confirmation of purchase with the total amount charged and Stripe Payment Intent ID (beginning with pi_).
 
 **Step 2: Choose the tech stack, understand the boilerplate application, and set up the environment**
 
-Javascript boilerplate application at [GitHub - mattmitchell6/sa-takehome-project-node: Take home project for Solutions Architect applicants](https://github.com/mattmitchell6/sa-takehome-project-node) was chosen to fast start.
+I chose the Node.js boilerplate application at [GitHub - mattmitchell6/sa-takehome-project-node: Take home project for Solutions Architect applicants](https://github.com/mattmitchell6/sa-takehome-project-node) to fast start.
 
-The boilerplate application is built on Handlebars and HTML/CSS/JavaScript. The sample code is understood.
+The boilerplate application is built on Express.js, Handlebars, HTML, CSS, JavaScript. I studied and understood the code.
 
-Setup the Node.js environment for the development.
+I set up the Node.js environment for the development.
 
 **Step 3: Sign up Stripe account and understand Stripe Payments**
 
-Studied [Stripe Payments](https://docs.stripe.com/payments).
+I studied [Stripe Payments](https://docs.stripe.com/payments) documentation, signed up the Stripe account, retrieved the keys, and configured the payment methods.
 
-"[Build an advanced integration](https://docs.stripe.com/payments/quickstart): use Stripe Elements to build a customizable payments form and checkout for your customers" was chosen as the assessment instruction specifies Stripe Payment Element instead of Stripe Checkout.
+I followed the [Build an advanced integration](https://docs.stripe.com/payments/quickstart) quick start guide because the assessment instructions specified using the Stripe Payment Element instead of Stripe Checkout..
 
 **Step 4: Map the assessment requirement to the payment flow**
 
-The flow is as below and was illustrated in the solution detail at the beginning of this documentation.
+The payment flow is as below and was illustrated in the solution detail at the beginning of this documentation.
 
 1. Customer selects a book and clicks "Checkout."
-2. The front makes a create Payment Intent request to the backend.
-3. The backend server creates a Payment Intent. It includes the amount. The Stripe API responds with a unique Payment Intent.
-4. Stripe returns the Payment Intent with Client Secret.
+2. The frontend sends a request to the backend to create a Payment Intent.
+3. The backend server creates a Payment Intent that includes the amount. The Stripe API responds with a unique Payment Intent.
+4. The Stripe API returns a unique Payment Intent with Client Secret.
 5. The backend sends the client Secret to the frontend.
-6. The frontend uses the initialize and render the Stripe Payment Element - the secure, pre-built UI form for payment details.
-7. When the customer clicks "Pay," frontend to securely submit the payment details to Stripe.
-8. Stripe processes the payment and redirects the user back to a success page.
-9. The success page displays the total amount of the charge and the Payment Intent ID (e.g., pi_123...).
+6. The frontend uses the initialize and render the Stripe Payment Element - a secure, pre-built UI form for collecting payment details.
+7. When the customer clicks "Pay", the frontend to securely submits the payment details to Stripe.
+8. Stripe processes the payment and redirects the customer to a success page.
+9. The success page displays the total amount of the charge and the Payment Intent ID.
 
 **Step 5: Implementation**
 
-1. Backend Impmentation (Node.js)
+1. Backend Implementation (Node.js)
    
    Install the Stripe Node library
    
@@ -183,11 +195,13 @@ The flow is as below and was illustrated in the solution detail at the beginning
    
    Implemented `GET /success` to route to payment confirmation
 
-2. Frountend Implementation
+2. Frontend Implementation
    
-   Implmented  `checkout.js` to pass item amount, create Payment Intent, retrieve Client Secret, mount the Payment Element, and submit the payment
+   Implemented  `checkout.js` to pass item amount, create Payment Intent, retrieve Client Secret, mount the Payment Element, and submit the payment
    
-   Implemented `success.js` to display the total amount of the charge and the Payment Intent ID when the payment is success and error message otherwise.
+   Implemented `success.js` to display the total amount of the charge and the Payment Intent ID when the payment is successful and error message otherwise.
+
+   Updated `checkout.hbs` and `success.hbs` to import the Stripe.js library and their respective JavaScript files. 
 
 **Step 6: Testing**
 
@@ -200,6 +214,8 @@ Used Stripe test cards and other testing payment methods to test the payment flo
 [Get started](https://docs.stripe.com/get-started)
 
 [Accept a payment: Advanced integration](https://docs.stripe.com/payments/accept-a-payment?platform=web&ui=elements#create-the-paymentintent)
+
+[Build an advanced integration quick start](https://docs.stripe.com/payments/quickstart)
 
 [Stripe API Reference](https://docs.stripe.com/api)
 
@@ -219,21 +235,21 @@ Used Stripe test cards and other testing payment methods to test the payment flo
 
 ### What challenges did you encounter?
 
-One challenge I encountered was to pass the payment amount to `/create-payment-intent` to create the Payment Intent. The `/checkout` in `app.js` has already converted the amount to the integer of how much to charge in the smallest currency unit (e.g. 2500 *cents* to charge $25). The following code is added to retrieve the amount from the DOM.
+**Retrieving the payment amount:** One challenge was passing the payment amount to create the Payment Intent. The `/checkout` in `app.js` has already converted the amount to the smallest currency unit (e.g. $25 to 2500 cents). To retrieve the amount on the client side, I added the following JavaScript to read it from the DOM:
 
 ```javascript
 const amountElement = document.querySelector(".amount");
 const amount = amountElement ? parseInt(amountElement.getAttribute("data-amount")) : 0;
 ```
 
-The second challenge was to listen to the form submission. The `checkout.hbs` uses `form name="payment-form"`. `document.querySelector('form[name="payment-form"]') ` needs to be used instead of `querySelector("#payment-form")` if the `id="payment-form"` is not added to the form.
+**Form submission:** The second challenge was selecting the payment form to listen for its submission event. Since `checkout.hbs` uses `name="payment-form"` instead of `id="payment-form"`. I needed to use `document.querySelector('form[name="payment-form"]') ` rather than `document.querySelector("#payment-form")`.
 
-The third challenge is the error handling and edge case testing. Simple error handlers have been added to the code. There may be more error scenarios that can happen. They are handled as a default error. 
+**Error handling and edge cases:** The third challenge is implementing robust error handling and testing for edge cases. I added simple handlers for common error scenarios. Any unexpected errors are caught and managed by a default error handler. More specific error conditions could be addressed in the future.  
 
 ## How you might extend this if you were building a more robust instance of the same application.
 
-Comprehensive error handling can be implemented to notify the customer more details about the payment errors.
+**Robust error handling:** Implementing more comprehensive error handling would provide the customers with clear, specific details about why a payment failed, improving the customer experience.
 
-Webhook can be implemented to automate actions after certain event happens. For example, when Stripe successfully processes a payment, it sends this event to the webhook endpoint and automatic fulfilment of the book purchase is triggered.
+**Webhook integration:** Implementing Webhook integration automates actions and workflow after certain event happens. For example, when Stripe successfully processes a payment, it can send an event to the webhook endpoint and automatically trigger the fulfillment process for the book purchase.
 
-Other Stripe capabilities can be implmented and extended: Stripe Radar for fraud prevention and Stripe Tax for tax automation.
+**Additional Stripe features:** Other Stripe capabilities can be implmented, such as Stripe Radar for fraud prevention, Stripe Tax for tax automation, and Stripe Sigma for advanced custom reports.
